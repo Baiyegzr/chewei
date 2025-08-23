@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车牌号管理系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-weight: 600;
+            font-size: 28px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .search-results {
+            background: #e3f2fd;
+            padding: 15px 20px;
+            border-bottom: 1px solid #bbdefb;
+        }
+        
+        .search-results-title {
+            font-weight: 600;
+            color: #0d47a1;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-results-title i {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .control-panel {
+            padding: 25px;
+            background: #f8fbff;
+            border-bottom: 1px solid #e3f2fd;
+        }
+        
+        .panel-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .panel-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a73e8;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            font-size: 22px;
+        }
+        
+        input, button, textarea, select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+            outline: none;
+        }
+        
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background: #0d47a1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 71, 161, 0.2);
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #bd2130;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 15px;
+        }
+        
+        .instructions {
+            font-size: 14px;
+            color: #666;
+            margin: -10px 0 15px;
+            padding: 0 5px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+        }
+        
+        .input-group button {
+            width: auto;
+            min-width: 100px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+        }
+        
+        .status-message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 16px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f5f7fa;
+            font-weight: 600;
+            color: #1a73e8;
+        }
+        
+        .license-plate {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 1px;
+            color: #0d47a1;
+        }
+        
+        .timestamp {
+            font-family: monospace;
+            font-size: 15px;
+            color: #555;
+        }
+        
+        .delete-btn {
+            background: #f44336;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            width: auto;
+        }
+        
+        .password-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .password-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .password-box h3 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .highlight {
+            background-color: #fffde7;
+        }
+        
+        /* 新增样式 */
+        .delete-success-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1050;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            display: flex;
+            align-items: center;
+        }
+        
+        .delete-success-toast.show {
+            transform: translateX(0);
+        }
+        
+        .add-success-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #1a73e8;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1050;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            display: flex;
+            align-items: center;
+        }
+        
+        .add-success-toast.show {
+            transform: translateX(0);
+        }
+        
+        .data-view-container {
+            display: none;
+            padding: 25px;
+            background: #f8fbff;
+            border-bottom: 1px solid #e3f2fd;
+        }
+        
+        .data-view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .data-view-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a73e8;
+        }
+        
+        .close-data-view-btn {
+            background: #6c757d;
+            padding: 10px 20px;
+            width: auto;
+        }
+        
+        .close-data-view-btn:hover {
+            background: #5a6268;
+        }
+        
+        /* 全部删除按钮容器 */
+        .clear-all-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group button {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+            
+            .clear-all-container {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            .control-panel {
+                padding: 20px 15px;
+            }
+            
+            th, td {
+                font-size: 14px;
+                padding: 10px 8px;
+            }
+            
+            .license-plate {
+                font-size: 16px;
+            }
+            
+            .delete-success-toast,
+            .add-success-toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>车牌号管理系统</h1>
+            <div class="subtitle">高效管理您的车牌信息</div>
+        </header>
+        
+        <!-- 搜索结果区域 -->
+        <div class="search-results" id="searchResultsContainer" style="display: none;">
+            <div class="search-results-title">
+                <i class="fas fa-search"></i> 搜索结果
+            </div>
+            <table id="searchResultsTable">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>车牌号</th>
+                        <th>录入时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 搜索结果将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="control-panel" id="controlPanel">
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-search"></i> 搜索车牌
+                </div>
+                <input type="text" id="searchInput" placeholder="搜索车牌号或录入时间（至少输入2个字符）...">
+            </div>
+            
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-car"></i> 添加车牌
+                </div>
+                <div class="input-group">
+                    <input type="text" id="newPlateInput" placeholder="输入单个车牌号">
+                    <button id="addButton"><i class="fas fa-plus"></i> 添加</button>
+                </div>
+                
+                <div>
+                    <textarea id="multiPlateInput" placeholder="批量输入车牌号（每行一个或用逗号、空格分隔）"></textarea>
+                    <div class="instructions">示例格式：豫A12345, 豫B67890\n豫C54321</div>
+                    <button id="addMultiButton"><i class="fas fa-list"></i> 批量添加</button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="section-title">
+                    <i class="fas fa-cog"></i> 系统操作
+                </div>
+                <div class="action-buttons">
+                    <button id="viewDataButton"><i class="fas fa-eye"></i> 查看车牌数据</button>
+                    <button id="saveButton" class="btn-success"><i class="fas fa-save"></i> 保存数据</button>
+                    <button id="clearAllButton" class="btn-danger"><i class="fas fa-trash"></i> 全部删除</button>
+                </div>
+                
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </div>
+        
+        <!-- 车牌数据查看区域（二级页面） -->
+        <div class="data-view-container" id="dataViewContainer">
+            <div class="data-view-header">
+                <div class="data-view-title">
+                    <i class="fas fa-database"></i> 车牌数据列表
+                </div>
+                <button id="closeDataView" class="close-data-view-btn">
+                    <i class="fas fa-times"></i> 关闭
+                </button>
+            </div>
+            
+            <!-- 全部删除按钮放在顶部 -->
+            <div class="clear-all-container">
+                <button id="clearAllButtonTop" class="btn-danger">
+                    <i class="fas fa-trash"></i> 全部删除
+                </button>
+            </div>
+            
+            <table id="licensePlateTable">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>车牌号</th>
+                        <th>录入时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 车牌数据将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 删除成功提示 -->
+    <div class="delete-success-toast" id="deleteSuccessToast">
+        <i class="fas fa-check-circle"></i> 车牌号删除成功！
+    </div>
+    
+    <!-- 添加成功提示 -->
+    <div class="add-success-toast" id="addSuccessToast">
+        <i class="fas fa-check-circle"></i> 车牌号添加成功！
+    </div>
+    
+    <!-- 批量添加成功提示 -->
+    <div class="add-success-toast" id="multiAddSuccessToast">
+        <i class="fas fa-check-circle"></i> <span id="multiAddMessage"></span>
+    </div>
+
+    <!-- 密码验证对话框 -->
+    <div class="password-dialog" id="passwordDialog">
+        <div class="password-box">
+            <h3>请输入密码</h3>
+            <input type="password" id="passwordInput" placeholder="输入密码">
+            <div class="action-buttons">
+                <button id="confirmDeleteButton" class="btn-danger"><i class="fas fa-check"></i> 确认删除</button>
+                <button id="cancelDeleteButton"><i class="fas fa-times"></i> 取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 查看数据的密码对话框 -->
+    <div class="password-dialog" id="viewPasswordDialog">
+        <div class="password-box">
+            <h3>请输入密码查看车牌数据</h3>
+            <input type="password" id="viewPasswordInput" placeholder="输入密码">
+            <div class="action-buttons">
+                <button id="confirmViewButton" class="btn-success"><i class="fas fa-check"></i> 确认</button>
+                <button id="cancelViewButton"><i class="fas fa-times"></i> 取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 车牌号数据（带时间戳）
+        let licensePlates = JSON.parse(localStorage.getItem('licensePlates')) || [];
+        
+        // 如果数据是旧格式（字符串数组），转换为新格式（对象数组）
+        if (licensePlates.length > 0 && typeof licensePlates[0] === 'string') {
+            const currentTime = Date.now();
+            licensePlates = licensePlates.map(plate => ({
+                plate: plate,
+                timestamp: currentTime
+            }));
+            localStorage.setItem('licensePlates', JSON.stringify(licensePlates));
+        }
+
+        // 时间格式化函数（只保留完整时间格式）
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('zh-CN');
+        }
+
+        // 保存数据到localStorage
+        function saveData() {
+            localStorage.setItem('licensePlates', JSON.stringify(licensePlates));
+            showStatusMessage('数据已保存', 'success');
+        }
+
+        // 初始化表格
+        function initTable() {
+            const tbody = document.querySelector('#licensePlateTable tbody');
+            tbody.innerHTML = '';
+            
+            licensePlates.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="license-plate">${item.plate}</td>
+                    <td class="timestamp">${formatTimestamp(item.timestamp)}</td>
+                    <td><button class="delete-btn" data-plate="${item.plate}"><i class="fas fa-trash"></i> 删除</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // 添加删除按钮事件监听
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const plateToRemove = this.getAttribute('data-plate');
+                    removeLicensePlate(plateToRemove);
+                });
+            });
+        }
+
+        // 搜索功能（支持车牌和时间搜索）
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.trim();
+            const resultsContainer = document.getElementById('searchResultsContainer');
+            const resultsTable = document.querySelector('#searchResultsTable tbody');
+            resultsTable.innerHTML = '';
+            
+            // 最少输入2个字符才显示搜索结果
+            if (filter.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            const filterUpper = filter.toUpperCase();
+            const results = licensePlates.filter(item => {
+                const plateMatch = item.plate.toUpperCase().includes(filterUpper);
+                const timeMatch = formatTimestamp(item.timestamp).toUpperCase().includes(filterUpper);
+                return plateMatch || timeMatch;
+            });
+            
+            if (results.length > 0) {
+                resultsContainer.style.display = 'block';
+                results.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'highlight';
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td class="license-plate">${item.plate}</td>
+                        <td class="timestamp">${formatTimestamp(item.timestamp)}</td>
+                        <td><button class="delete-btn" data-plate="${item.plate}"><i class="fas fa-trash"></i> 删除</button></td>
+                    `;
+                    resultsTable.appendChild(row);
+                });
+                
+                // 为搜索结果中的删除按钮添加事件监听
+                document.querySelectorAll('#searchResultsTable .delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const plateToRemove = this.getAttribute('data-plate');
+                        removeLicensePlate(plateToRemove);
+                    });
+                });
+            } else {
+                resultsContainer.style.display = 'none';
+            }
+        }
+
+        // 添加单个车牌号
+        function addLicensePlate() {
+            const input = document.getElementById('newPlateInput');
+            const newPlate = input.value.trim();
+            
+            if (!newPlate) {
+                showStatusMessage('请输入有效的车牌号', 'error');
+                return;
+            }
+            
+            if (processPlateInput(newPlate)) {
+                input.value = '';
+                input.focus();
+                
+                // 显示添加成功弹窗
+                const toast = document.getElementById('addSuccessToast');
+                toast.querySelector('i').nextSibling.textContent = `车牌号 ${newPlate} 添加成功`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // 批量添加车牌号
+        function addMultipleLicensePlates() {
+            const textarea = document.getElementById('multiPlateInput');
+            const input = textarea.value.trim();
+            
+            if (!input) {
+                showStatusMessage('请输入有效的车牌号', 'error');
+                return;
+            }
+            
+            // 使用更强大的正则表达式处理多种分隔符
+            const plates = input.split(/[\n,，\s]+/)
+                .map(plate => plate.trim())
+                .filter(plate => plate.length > 0);
+            
+            if (plates.length === 0) {
+                showStatusMessage('未检测到有效的车牌号', 'error');
+                return;
+            }
+            
+            let addedCount = 0;
+            plates.forEach(plate => {
+                if (processPlateInput(plate, false)) {
+                    addedCount++;
+                }
+            });
+            
+            textarea.value = '';
+            
+            // 显示批量添加成功弹窗
+            const toast = document.getElementById('multiAddSuccessToast');
+            document.getElementById('multiAddMessage').textContent = `成功添加 ${addedCount} 个车牌号`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 处理车牌号输入
+        function processPlateInput(plate, showFeedback = true) {
+            // 车牌号验证正则表达式
+            if (!/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4,5}[A-Z0-9挂学警港澳]{1}$/.test(plate)) {
+                if (showFeedback) {
+                    showStatusMessage(`车牌号 ${plate} 格式不正确`, 'error');
+                }
+                return false;
+            }
+            
+            if (licensePlates.some(item => item.plate === plate)) {
+                if (showFeedback) {
+                    showStatusMessage(`车牌号 ${plate} 已存在`, 'error');
+                }
+                return false;
+            }
+            
+            // 新增车牌插入到数组开头
+            licensePlates.unshift({
+                plate: plate,
+                timestamp: Date.now()
+            });
+            
+            initTable();
+            saveData();
+            
+            return true;
+        }
+
+        // 删除车牌号
+        function removeLicensePlate(plate) {
+            licensePlates = licensePlates.filter(item => item.plate !== plate);
+            initTable();
+            saveData();
+            
+            // 显示删除成功弹窗
+            const toast = document.getElementById('deleteSuccessToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+            
+            // 如果正在搜索，重新执行搜索
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.value) {
+                searchTable();
+            }
+        }
+
+        // 全部删除（带密码验证）
+        function clearAllLicensePlates() {
+            const passwordDialog = document.getElementById('passwordDialog');
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+            
+            passwordDialog.style.display = 'flex';
+            passwordInput.focus();
+            
+            function closeDialog() {
+                passwordDialog.style.display = 'none';
+                passwordInput.value = '';
+            }
+            
+            function handleConfirm() {
+                if (passwordInput.value === 'yx110') {
+                    licensePlates = [];
+                    initTable();
+                    saveData();
+                    document.getElementById('searchResultsContainer').style.display = 'none';
+                    showStatusMessage('所有车牌号已删除', 'success');
+                    
+                    // 显示删除成功弹窗
+                    const toast = document.getElementById('deleteSuccessToast');
+                    toast.querySelector('i').nextSibling.textContent = '所有车牌号已删除';
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+                    
+                    closeDialog();
+                } else {
+                    showStatusMessage('密码错误', 'error');
+                }
+            }
+            
+            confirmDeleteButton.onclick = handleConfirm;
+            
+            cancelDeleteButton.onclick = closeDialog;
+            
+            // 回车键确认
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleConfirm();
+                }
+            });
+            
+            // ESC键关闭对话框
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDialog();
+                }
+            });
+        }
+
+        // 显示车牌数据（带密码验证）
+        function showLicenseData() {
+            const viewPasswordDialog = document.getElementById('viewPasswordDialog');
+            const viewPasswordInput = document.getElementById('viewPasswordInput');
+            const confirmViewButton = document.getElementById('confirmViewButton');
+            const cancelViewButton = document.getElementById('cancelViewButton');
+            
+            viewPasswordDialog.style.display = 'flex';
+            viewPasswordInput.focus();
+            
+            function closeDialog() {
+                viewPasswordDialog.style.display = 'none';
+                viewPasswordInput.value = '';
+            }
+            
+            function handleConfirm() {
+                if (viewPasswordInput.value === 'yx110') {
+                    // 隐藏控制面板，显示数据查看容器
+                    document.getElementById('controlPanel').style.display = 'none';
+                    document.getElementById('searchResultsContainer').style.display = 'none';
+                    document.getElementById('dataViewContainer').style.display = 'block';
+                    closeDialog();
+                } else {
+                    showStatusMessage('密码错误', 'error');
+                }
+            }
+            
+            confirmViewButton.onclick = handleConfirm;
+            
+            cancelViewButton.onclick = closeDialog;
+            
+            // 回车键确认
+            viewPasswordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleConfirm();
+                }
+            });
+            
+            // ESC键关闭对话框
+            viewPasswordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDialog();
+                }
+            });
+        }
+
+        // 关闭数据查看
+        function closeDataView() {
+            document.getElementById('controlPanel').style.display = 'block';
+            document.getElementById('dataViewContainer').style.display = 'none';
+        }
+
+        // 显示状态消息
+        function showStatusMessage(message, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            initTable();
+            
+            // 事件监听
+            document.getElementById('searchInput').addEventListener('input', searchTable);
+            document.getElementById('addButton').addEventListener('click', addLicensePlate);
+            document.getElementById('newPlateInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addLicensePlate();
+                }
+            });
+            document.getElementById('addMultiButton').addEventListener('click', addMultipleLicensePlates);
+            document.getElementById('saveButton').addEventListener('click', saveData);
+            document.getElementById('clearAllButton').addEventListener('click', clearAllLicensePlates);
+            document.getElementById('viewDataButton').addEventListener('click', showLicenseData);
+            document.getElementById('closeDataView').addEventListener('click', closeDataView);
+            document.getElementById('clearAllButtonTop').addEventListener('click', clearAllLicensePlates);
+            
+            // 页面加载后聚焦到搜索框
+            document.getElementById('searchInput').focus();
+        });
+    </script>
+</body>
+</html>
