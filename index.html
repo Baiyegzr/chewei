@@ -3,183 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>车牌号码查询系统</title>
+    <title>智慧车场 - 车辆信息查询系统</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f9ff;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
             padding: 20px;
             color: #333;
         }
+        
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
         }
-        h1 {
-            color: #1a73e8;
+        
+        header {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        .search-box {
-            display: flex;
+            padding: 20px 0;
             margin-bottom: 20px;
         }
-        #search-input {
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #1a5fb4;
+        }
+        
+        .search-container, .results-container, .data-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-header, .results-header, .data-header {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h2 {
+            font-size: 1.3rem;
+            color: #1a5fb4;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+        
+        th {
+            background: #f0f0f0;
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
             flex: 1;
             padding: 10px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 1rem;
         }
-        .results {
-            margin-top: 20px;
+        
+        .search-button {
+            background: #1a5fb4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .plate-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-        }
-        .plate-item:last-child {
-            border-bottom: none;
-        }
-        .plate-item:hover {
-            background-color: #f0f7ff;
-        }
-        .plate-index {
-            color: #666;
-            margin-right: 15px;
-            min-width: 30px;
-        }
-        .plate-number {
-            font-weight: bold;
-            color: #1a73e8;
-        }
+        
         .no-results {
             text-align: center;
+            padding: 30px;
             color: #666;
-            padding: 20px;
         }
-        .stats {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f0fe;
-            border-radius: 4px;
-            color: #1a73e8;
+        
+        .highlight {
+            background-color: #fff4ba;
+            font-weight: bold;
         }
-        .hint {
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
             color: #666;
-            font-size: 14px;
-            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>车牌号码查询系统</h1>
         
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="输入至少2个字符进行查询...">
-        </div>
-        <div class="hint">输入至少2个字符(数字或字母)即可自动查询</div>
         
-        <div class="stats">
-            共收录 <span id="total-count">0</span> 个车牌号码
+        <div class="search-container">
+            <div class="search-header">
+                <h2>车辆信息查询</h2>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="search-input" class="search-input" placeholder="输入车牌、姓名或手机号进行查询...">
+                <button id="search-btn" class="search-button">查询</button>
+            </div>
         </div>
         
-        <div class="results" id="results-container">
-            <!-- 结果将在这里显示 -->
+        <div class="results-container">
+            <div class="results-header">
+                <h2>车辆查询结果</h2>
+                <div>共找到 <span id="found-count">0</span> 条记录</div>
+            </div>
+            
+            <div class="table-container">
+                <table id="vehicle-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>车牌号</th>
+                            <th>车主姓名</th>
+                            <th>手机号</th>
+                            <th>门牌号</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehicle-data">
+                        <tr class="no-results">
+                            <td colspan="5">请输入查询条件以显示结果</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        
+        <div class="data-container">
+            <div class="data-header">
+                <h2>车辆数据列表</h2>
+            </div>
+            
+            <div class="table-container">
+                <table id="all-vehicle-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>车牌号</th>
+                            <th>车主姓名</th>
+                            <th>手机号</th>
+                            <th>门牌号</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-vehicle-data">
+                        <!-- 所有车辆数据将通过JavaScript动态加载 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>智慧车场管理系统 &copy; 2025</p>
+        </footer>
     </div>
 
     <script>
-        // 车牌数据（带原始序号）
-        const licensePlates = [
-            "豫AG18S8", "豫V239QG", "豫AAA8677", "豫A87F2S", "豫AGK510", 
-            "豫AZ1A16", "豫AA8V761", "豫AAY8329", "豫B6LR02", "豫A8W01A",
-            "豫A3N9X8", "豫A79RV0", "豫R738UU", "豫A8E4N2", "豫BQN681",
-            "豫AU0S45", "豫V368CT", "豫BYL111", "豫A5A07G", "豫A3XL00",
-            "豫AG75908", "豫V6DC31", "豫A3ZW6C", "豫VA3Q78", "豫AN98Z8",
-            "豫V238ND", "豫ADL3997", "豫AAC8775", "豫VH7F00", "豫A35QN1",
-            "豫A53Z8S", "豫AL643T", "豫AHX544", "豫AQ30P6", "豫VDC875",
-            "豫A16ZS3", "豫AFZ8159", "豫A015XB", "豫A0G5A1", "豫A3JH83",
-            "豫AD58471", "豫ADP9992", "豫AA15228", "豫A3E7Y1", "豫V17876",
-            "豫VMG057", "豫A53D7R", "豫AAX6913", "豫LCB579", "豫AD20282",
-            "豫A282X0", "豫A096G6", "豫AG021E", "豫P00M66", "豫ANE505",
-            "豫V832EL", "豫E33U21", "豫AA53069", "豫VJ8W35", "豫A6N13Q",
-            "豫A30U3J", "豫A68K1S", "豫VK6W66", "豫V298JV", "豫APK546",
-            "豫AA15387", "豫ADS5373", "豫A79N6D", "豫GJ567F", "豫AGB6976",
-            "豫VL9171", "豫AFV0257", "豫A9Z07L", "豫A383ZM", "豫A3MZ86",
-            "豫AD31132", "豫PLS510", "豫ADD0735", "豫A82M01", "豫VQ8Q63",
-            "豫A61W6Z", "豫A2E9D5", "豫A61C50", "豫A3KH29", "豫A82F1Q",
-            "豫AAJ3008", "豫A61Q0R", "豫AB33905", "豫AUD571", "豫A05N6U",
-            "皖ROB095", "豫A3Y09P", "豫A02L3T", "豫ABD1117", "豫AUJ601",
-            "豫PJ932K", "豫A62M5P", "豫BF9130"
+        // 车辆数据
+        const vehicleData = [
+            {id: 1, owner: "张朋坤", phone: "13383714469", plate: "豫A5RG33", house: "-", plan: "月租车"},
+            {id: 2, owner: "韩钰凯、丁毅", phone: "16628705161", plate: "豫A3C0S2", house: "-", plan: "月租车"},
+            {id: 3, owner: "刘彦平", phone: "13700861652", plate: "豫A62KF3", house: "-", plan: "月租车"},
+            {id: 4, owner: "杨弘文", phone: "13203813537", plate: "豫VRM500", house: "-", plan: "月租车"},
+            {id: 5, owner: "朱海洋", phone: "17788114607", plate: "豫AF25023", house: "-", plan: "月租车"},
+            {id: 6, owner: "李建伟", phone: "18837145922", plate: "豫A3U319", house: "-", plan: "月租车"},
+            {id: 7, owner: "任英辉", phone: "13525843831", plate: "豫VZ99U0", house: "-", plan: "月租车"},
+            {id: 8, owner: "潘超旭", phone: "19837101636", plate: "豫ADU0827", house: "-", plan: "月租车"},
+            {id: 9, owner: "马玉莹", phone: "15981885602", plate: "豫ADF9861", house: "-", plan: "月租车"},
+            {id: 10, owner: "周彬", phone: "18837122358", plate: "豫AD58471", house: "-", plan: "月租车"},
+            {id: 11, owner: "王志强", phone: "15225182762", plate: "豫AB33905", house: "-", plan: "月租车"},
+            {id: 12, owner: "任彪", phone: "18703800501", plate: "豫V720KQ", house: "-", plan: "月租车"},
+            {id: 13, owner: "吴帆", phone: "19949167896", plate: "豫AWC923", house: "-", plan: "月租车"},
+            {id: 14, owner: "梁峰", phone: "13657137367", plate: "苏EN90V7", house: "-", plan: "月租车"},
+            {id: 15, owner: "王振栋", phone: "13007506280", plate: "豫A3G138", house: "-", plan: "极速车"},
+            {id: 16, owner: "李春生", phone: "15837148659", plate: "豫A61Z31,豫AP360W", house: "-", plan: "月租车"},
+            {id: 17, owner: "黄宏俊", phone: "18203669750", plate: "豫A2E8C0", house: "-", plan: "月租车"},
+            {id: 18, owner: "李凯", phone: "15036133624", plate: "豫A1F7A1", house: "-", plan: "月租车"},
+            {id: 19, owner: "许珊珊", phone: "15838271021", plate: "豫A513RS", house: "-", plan: "月租车"},
+            {id: 20, owner: "张龙祥", phone: "18703847388", plate: "豫CK0C26", house: "-", plan: "月租车"},
+            {id: 21, owner: "刘李欣", phone: "13472542811", plate: "豫A3E7Y1", house: "-", plan: "月租车"},
+            {id: 22, owner: "牛丽鹏", phone: "15981881605", plate: "豫AAY3862", house: "-", plan: "月租车"},
+            {id: 23, owner: "韩志蕊", phone: "13838261939", plate: "豫A5VM39", house: "-", plan: "月租车"},
+            {id: 24, owner: "赵二江", phone: "13526512827", plate: "豫A53EE8", house: "-", plan: "月租车"},
+            {id: 25, owner: "王建华", phone: "18838199751", plate: "豫A3JH83", house: "B113 3-2-302", plan: "月租车"},
+            {id: 26, owner: "李玉昆", phone: "15824867871", plate: "豫BF9130", house: "A072 极7-3-801", plan: "月租车"},
+            {id: 27, owner: "王淑萍", phone: "13525588655", plate: "豫A0G5A1", house: "A010 7-2-602", plan: "月租车"},
+            {id: 28, owner: "凌治良", phone: "17719960967", plate: "豫A62M5P", house: "A075 1-1-1006", plan: "月租车"},
+            {id: 29, owner: "彭淼", phone: "15703895514", plate: "豫AUJ601,豫VQ63Q0", house: "A095 7-2-401", plan: "月租车"},
+            {id: 30, owner: "李滕", phone: "15036196818", plate: "豫ABD1117,豫A02L3T", house: "A111 3-2-902", plan: "月租车"},
+            {id: 31, owner: "王保仓", phone: "13683817631", plate: "豫A3Y09P", house: "A103 7-1-401", plan: "月租车"},
+            {id: 32, owner: "黄小会", phone: "13027629880", plate: "皖R0B095,豫A05N6U", house: "B165 6-2-701", plan: "月租车"},
+            {id: 33, owner: "赵政航", phone: "18539964929", plate: "豫AUD571", house: "A071 7-3-501", plan: "月租车"},
+            {id: 34, owner: "王志强", phone: "15225182762", plate: "豫A61Q0R", house: "B120 7-1-901", plan: "月租车"},
+            {id: 35, owner: "隋俊平", phone: "17329444231", plate: "豫AGP2808,豫AM1A03", house: "B116 6-2-501", plan: "月租车"},
+            {id: 36, owner: "何姗姗", phone: "13014560100", plate: "豫AAJ3008,豫A82F1Q", house: "A070 7-3-302", plan: "月租车"},
+            {id: 37, owner: "蒋周利", phone: "15038309343", plate: "豫A1J82J", house: "A090 7-3-901", plan: "月租车"},
+            {id: 38, owner: "建桂芝", phone: "15981846171", plate: "豫AG021E", house: "A003 7-3-602", plan: "月租车"},
+            {id: 39, owner: "张朋坤", phone: "13383714469", plate: "豫VH7F00", house: "A092 1-1-203", plan: "月租车"},
+            {id: 40, owner: "王永强", phone: "18539998001", plate: "豫A3KH29,豫A61C50", house: "B111 6-2-502", plan: "月租车"},
+            {id: 41, owner: "蒋伟霞", phone: "15837182665", plate: "豫A32W6C", house: "B003 6-1-502", plan: "月租车"},
+            {id: 42, owner: "丁会岭", phone: "13592515718", plate: "豫A61W6Z,豫A2E9D5", house: "B233 3-2-501", plan: "月租车"},
+            {id: 43, owner: "贾永歌", phone: "135极26562829", plate: "豫VQ8Q63", house: "B162 2-1-805", plan: "月租车"},
+            {id: 44, owner: "焦源", phone: "17814675399", plate: "豫A82M01", house: "B119 6-2-601", plan: "月租车"},
+            {id: 45, owner: "袁洪伟", phone: "13014510007", plate: "豫A5J40R,豫V0ZS58", house: "A091 1-1-305", plan: "月租车"},
+            {id: 46, owner: "张利", phone: "15620696149", plate: "豫PLS510,豫ADD0735", house: "A089 1-1-304", plan: "月租车"},
+            {id: 47, owner: "孔秀萍", phone: "15225066223", plate: "豫AK297X", house: "A100 2-1-1905", plan: "月租车"},
+            {id: 48, owner: "聂自勇", phone: "13673357838", plate: "豫AD31132", house: "A008垃圾房附近临时停A053 7-3-502", plan: "月租车"},
+            {id: 49, owner: "关超亚", phone: "17606825053", plate: "豫A383ZM,豫A3MZ86", house: "B160 2-1-706", plan: "月租车"},
+            {id: 50, owner: "李炳凤", phone: "13267167075", plate: "豫AFV0257,豫A9Z07L", house: "B115 6-2-902", plan: "月租车"},
+            {id: 51, owner: "龚明明", phone: "15839029013", plate: "豫VL9171", house: "B132 6-2-702", plan: "月租车"},
+            {id: 52, owner: "李雪", phone: "18300663303", plate: "豫GJ567F,豫AGB6976", house: "A002 7-2-601", plan: "月租车"},
+            {id: 53, owner: "周靖博", phone: "17516204906", plate: "豫A79N6D,豫A10230", house: "A005 7-3-601", plan: "月租车"},
+            {id: 54, owner: "李乐", phone: "15093126900", plate: "豫A8W01A,豫A3N9X8", house: "B010 6-2-801", plan: "月租车"},
+            {id: 55, owner: "熊宝秀", phone: "17814675399", plate: "豫AA15387,豫ADS5373", house: "B118 6-2-602", plan: "月租车"},
+            {id: 56, owner: "李松江", phone: "18539416917", plate: "豫V298JV,豫APK546", house: "B169 3-2-201", plan: "月租车"},
+            {id: 57, owner: "刘盼", phone: "18739693318", plate: "豫VK6W66,豫A51HG0", house: "B006 6-1-501", plan: "月租车"},
+            {id: 58, owner: "程军珂", phone: "13525519093", plate: "豫AGL6615,豫A8K98M", house: "A006 7-2-802", plan: "月租车"},
+            {id: 59, owner: "周凤妮", phone: "13623850571", plate: "豫A6N13Q", house: "A110 7-1-502", plan: "月租车"},
+            {id: 60, owner: "张建玲", phone: "18937120002", plate: "豫VJ8W35,豫ABA0399", house: "A106 7-1-402", plan: "月租车"},
+            {id: 61, owner: "郑孝雪", phone: "13592515718", plate: "豫V832EL,豫E33U21", house: "A097 1-1-204", plan: "月租车"},
+            {id: 62, owner: "黄超", phone: "13523700177", plate: "豫P00M66,豫ANE505", house: "A098 7-2-301", plan: "月租车"},
+            {id: 63, owner: "许会玲", phone: "13343825444", plate: "豫AG18S8,豫V239QG", house: "B205 5-2-601", plan: "月租车"},
+            {id: 64, owner: "孙秀芝", phone: "17760732001", plate: "豫A0S6G6", house: "A096 3-2-601", plan: "月租车"},
+            {id: 65, owner: "杨勇", phone: "13673677860", plate: "豫AD20282,豫A282X0", house: "B158 5-1-501", plan: "月租车"},
+            {id: 66, owner: "张林林", phone: "15638155992", plate: "豫AZ6H97,豫V2SL98", house: "A007 6-2-401", plan: "月租车"},
+            {id: 67, owner: "李燕", phone: "18625658252", plate: "豫A53D7R,豫AAX6913", house: "A109 2-1-1005", plan: "月租车"},
+            {id: 68, owner: "曹森林", phone: "17557266865", plate: "豫VMG057", house: "B008 6-1-701", plan: "月租车"},
+            {id: 69, owner: "关红艳", phone: "13298167669", plate: "豫V17876", house: "B161 7-1-301", plan: "月租车"},
+            {id: 70, owner: "张莉景", phone: "13903869006", plate: "豫ADP9992,豫AA15228", house: "A073 7-3-301", plan: "月租车"},
+            {id: 71, owner: "许双双", phone: "15516922899", plate: "豫AY6J02", house: "A099 7-3-401", plan: "月租车"},
+            {id: 72, owner: "石山坡", phone: "17788173677", plate: "豫A48K6F", house: "A102 2-1-505", plan: "月租车"},
+            {id: 73, owner: "马玉莹", phone: "15981885602", plate: "豫A1Z81X", house: "B159 5-1-701", plan: "月租车"},
+            {id: 74, owner: "董振远", phone: "13603485452", plate: "豫ABP8792,豫APP669", house: "B173 2-1-703", plan: "月租车"},
+            {id: 75, owner: "李红彦", phone: "18037388368", plate: "豫A3B76E", house: "A108 6-1-601", plan: "月租车"},
+            {id: 76, owner: "孟放", phone: "18800000002", plate: "豫00002", house: "B237 3-2-701", plan: "临时车"},
+            {id: 77, owner: "李冬青", phone: "18800000001", plate: "豫00001", house: "B163 3-2-602", plan: "临时车"},
+            {id: 78, owner: "付雪国", phone: "18800000000", plate: "豫00000", house: "B110 6-2-802", plan: "临时车"},
+            {id: 79, owner: "马健", phone: "15538130110", plate: "豫AFZ8159,豫A16ZS3", house: "B252 3-2-202", plan: "临时车"},
+            {id: 80, owner: "张向青", phone: "18237173758", plate: "豫A89Z5L", house: "B167 2-1-1403", plan: "临时车"},
+            {id: 81, owner: "宁永丽", phone: "13071012989", plate: "豫AQ30P6", house: "A105 3-2-802", plan: "临时车"},
+            {id: 82, owner: "薛永梅", phone: "13938527232", plate: "豫A53Z8S", house: "B117 6-1-702", plan: "临时车"},
+            {id: 83, owner: "陈正林", phone: "13653866960", plate: "豫ADL3997,豫AAC8775", house: "B206 3-2-401", plan: "临时车"},
+            {id: 84, owner: "王宝娟", phone: "17303833297", plate: "豫V238ND,豫AN98Z8", house: "B121 6-2-402", plan: "临时车"},
+            {id: 85, owner: "李杰", phone: "15738815023", plate: "豫VA3Q78", house: "B007 6-1-802", plan: "临时车"},
+            {id: 86, owner: "蔡蒙蒙", phone: "13460600169", plate: "豫V6DC31,豫AG75908", house: "A101 7-2-501", plan: "临时车"},
+            {id: 87, owner: "杨先军", phone: "15890677673", plate: "豫A5A07G,豫A3XL00", house: "A093 7-3-402", plan: "临时车"},
+            {id: 88, owner: "时明建", phone: "15837181927", plate: "豫BQN681", house: "B166 2-1-1803", plan: "临时车"},
+            {id: 89, owner: "别云岩", phone: "18003851988", plate: "豫A8E4N2", house: "A011 7-2-801", plan: "临时车"},
+            {id: 90, owner: "楚红蕊", phone: "15038101358", plate: "豫A79RV0,豫R738UU", house: "B109 2-1-1405", plan: "临时车"},
+            {id: 91, owner: "刘珂", phone: "13303715249", plate: "豫AAY8329,豫B6LR02", house: "B005 6-1-602", plan: "临时车"},
+            {id: 92, owner: "乔鹏帅", phone: "15649864555", plate: "豫AAV8761,豫ABU9605", house: "B112 7-2-302", plan: "临时车"},
+            {id: 93, owner: "许海洋", phone: "18317816736", plate: "豫AGK510", house: "A009 7-2-502", plan: "临时车"},
+            {id: 94, owner: "李升阳", phone: "17737273555", plate: "豫AAA8677,豫A87F2S", house: "A107 7-1-802", plan: "临时车"}
         ];
 
-        // 初始化页面
+        // DOM 加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
-            // 显示总数
-            document.getElementById('total-count').textContent = licensePlates.length;
+            const searchBtn = document.getElementById('search-btn');
+            const searchInput = document.getElementById('search-input');
+            const vehicleBody = document.getElementById('vehicle-data');
+            const allVehicleBody = document.getElementById('all-vehicle-data');
+            const foundCount = document.getElementById('found-count');
             
-            // 显示所有车牌（带原始序号）
-            displayResults(licensePlates.map((plate, index) => ({plate, originalIndex: index + 1})));
+            // 初始渲染所有数据到下方表格
+            renderAllVehicleData();
             
-            // 绑定输入事件
-            document.getElementById('search-input').addEventListener('input', function() {
-                const searchTerm = this.value.trim().toUpperCase();
+            // 搜索按钮点击事件
+            searchBtn.addEventListener('click', filterVehicleData);
+            
+            // 输入框输入事件 - 自动查询
+            searchInput.addEventListener('input', filterVehicleData);
+            
+            // 渲染所有车辆数据
+            function renderAllVehicleData() {
+                allVehicleBody.innerHTML = '';
                 
-                // 只有输入至少2个字符时才进行搜索
-                if (searchTerm.length >= 2) {
-                    searchPlates(searchTerm);
-                } else {
-                    displayResults(licensePlates.map((plate, index) => ({plate, originalIndex: index + 1})));
+                vehicleData.forEach(vehicle => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${vehicle.id}</td>
+                        <td>${vehicle.plate}</td>
+                        <td>${vehicle.owner}</td>
+                        <td>${vehicle.phone}</td>
+                        <td>${vehicle.house}</td>
+                    `;
+                    allVehicleBody.appendChild(row);
+                });
+            }
+            
+            // 过滤并显示车辆数据
+            function filterVehicleData() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="5">请输入查询条件以显示结果</td></tr>';
+                    foundCount.textContent = '0';
+                    return;
                 }
-            });
+                
+                const filteredData = vehicleData.filter(vehicle => 
+                    vehicle.owner.toLowerCase().includes(searchTerm) || 
+                    vehicle.phone.includes(searchTerm) || 
+                    vehicle.plate.toLowerCase().includes(searchTerm) || 
+                    vehicle.house.toLowerCase().includes(searchTerm)
+                );
+                
+                renderVehicleData(filteredData);
+            }
+            
+            // 渲染车辆数据到表格
+            function renderVehicleData(data) {
+                foundCount.textContent = data.length;
+                vehicleBody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="5">没有找到匹配的车辆信息</td></tr>';
+                    return;
+                }
+                
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                data.forEach(vehicle => {
+                    const row = document.createElement('tr');
+                    
+                    const highlight = (text) => {
+                        if (!searchTerm || !text) return text;
+                        const regex = new RegExp(searchTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
+                        return text.toString().replace(regex, match => 
+                            `<span class="highlight">${match}</span>`
+                        );
+                    };
+                    
+                    row.innerHTML = `
+                        <td>${vehicle.id}</td>
+                        <td>${highlight(vehicle.plate)}</td>
+                        <td>${highlight(vehicle.owner)}</td>
+                        <td>${highlight(vehicle.phone)}</td>
+                        <td>${highlight(vehicle.house)}</td>
+                    `;
+                    
+                    vehicleBody.appendChild(row);
+                });
+            }
         });
-
-        // 搜索车牌
-        function searchPlates(searchTerm) {
-            let results = [];
-            
-            if (searchTerm.length < 2) {
-                results = licensePlates.map((plate, index) => ({plate, originalIndex: index + 1}));
-            } else {
-                results = licensePlates
-                    .map((plate, index) => ({plate, originalIndex: index + 1}))
-                    .filter(item => 
-                        item.plate.includes(searchTerm)
-                    );
-            }
-            
-            displayResults(results);
-        }
-
-        // 显示结果
-        function displayResults(items) {
-            const resultsContainer = document.getElementById('results-container');
-            
-            if (items.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">未找到匹配的车牌号码</div>';
-                return;
-            }
-            
-            let html = '';
-            items.forEach(item => {
-                html += `
-                    <div class="plate-item">
-                        <span class="plate-index">${item.originalIndex}.</span>
-                        <span class="plate-number">${item.plate}</span>
-                    </div>
-                `;
-            });
-            
-            resultsContainer.innerHTML = html;
-        }
     </script>
 </body>
 </html>
