@@ -131,8 +131,6 @@
 </head>
 <body>
     <div class="container">
-        
-        
         <div class="search-container">
             <div class="search-header">
                 <h2>车辆信息查询</h2>
@@ -159,11 +157,12 @@
                             <th>车主姓名</th>
                             <th>手机号</th>
                             <th>门牌号</th>
+                            <th>车辆类型</th>
                         </tr>
                     </thead>
                     <tbody id="vehicle-data">
                         <tr class="no-results">
-                            <td colspan="5">请输入查询条件以显示结果</td>
+                            <td colspan="6">请输入至少2个字符进行查询</td>
                         </tr>
                     </tbody>
                 </table>
@@ -184,6 +183,7 @@
                             <th>车主姓名</th>
                             <th>手机号</th>
                             <th>门牌号</th>
+                            <th>车辆类型</th>
                         </tr>
                     </thead>
                     <tbody id="all-vehicle-data">
@@ -215,7 +215,7 @@
             {id: 12, owner: "任彪", phone: "18703800501", plate: "豫V720KQ", house: "-", plan: "月租车"},
             {id: 13, owner: "吴帆", phone: "19949167896", plate: "豫AWC923", house: "-", plan: "月租车"},
             {id: 14, owner: "梁峰", phone: "13657137367", plate: "苏EN90V7", house: "-", plan: "月租车"},
-            {id: 15, owner: "王振栋", phone: "13007506280", plate: "豫A3G138", house: "-", plan: "极速车"},
+            {id: 15, owner: "王振栋", phone: "13007506280", plate: "豫A3G138", house: "-", plan: "月租车"},
             {id: 16, owner: "李春生", phone: "15837148659", plate: "豫A61Z31,豫AP360W", house: "-", plan: "月租车"},
             {id: 17, owner: "黄宏俊", phone: "18203669750", plate: "豫A2E8C0", house: "-", plan: "月租车"},
             {id: 18, owner: "李凯", phone: "15036133624", plate: "豫A1F7A1", house: "-", plan: "月租车"},
@@ -226,7 +226,7 @@
             {id: 23, owner: "韩志蕊", phone: "13838261939", plate: "豫A5VM39", house: "-", plan: "月租车"},
             {id: 24, owner: "赵二江", phone: "13526512827", plate: "豫A53EE8", house: "-", plan: "月租车"},
             {id: 25, owner: "王建华", phone: "18838199751", plate: "豫A3JH83", house: "B113 3-2-302", plan: "月租车"},
-            {id: 26, owner: "李玉昆", phone: "15824867871", plate: "豫BF9130", house: "A072 极7-3-801", plan: "月租车"},
+            {id: 26, owner: "李玉昆", phone: "15824867871", plate: "豫BF9130", house: "A072 7-3-801", plan: "月租车"},
             {id: 27, owner: "王淑萍", phone: "13525588655", plate: "豫A0G5A1", house: "A010 7-2-602", plan: "月租车"},
             {id: 28, owner: "凌治良", phone: "17719960967", plate: "豫A62M5P", house: "A075 1-1-1006", plan: "月租车"},
             {id: 29, owner: "彭淼", phone: "15703895514", plate: "豫AUJ601,豫VQ63Q0", house: "A095 7-2-401", plan: "月租车"},
@@ -243,12 +243,12 @@
             {id: 40, owner: "王永强", phone: "18539998001", plate: "豫A3KH29,豫A61C50", house: "B111 6-2-502", plan: "月租车"},
             {id: 41, owner: "蒋伟霞", phone: "15837182665", plate: "豫A32W6C", house: "B003 6-1-502", plan: "月租车"},
             {id: 42, owner: "丁会岭", phone: "13592515718", plate: "豫A61W6Z,豫A2E9D5", house: "B233 3-2-501", plan: "月租车"},
-            {id: 43, owner: "贾永歌", phone: "135极26562829", plate: "豫VQ8Q63", house: "B162 2-1-805", plan: "月租车"},
+            {id: 43, owner: "贾永歌", phone: "13526562829", plate: "豫VQ8Q63", house: "B162 2-1-805", plan: "月租车"},
             {id: 44, owner: "焦源", phone: "17814675399", plate: "豫A82M01", house: "B119 6-2-601", plan: "月租车"},
             {id: 45, owner: "袁洪伟", phone: "13014510007", plate: "豫A5J40R,豫V0ZS58", house: "A091 1-1-305", plan: "月租车"},
             {id: 46, owner: "张利", phone: "15620696149", plate: "豫PLS510,豫ADD0735", house: "A089 1-1-304", plan: "月租车"},
             {id: 47, owner: "孔秀萍", phone: "15225066223", plate: "豫AK297X", house: "A100 2-1-1905", plan: "月租车"},
-            {id: 48, owner: "聂自勇", phone: "13673357838", plate: "豫AD31132", house: "A008垃圾房附近临时停A053 7-3-502", plan: "月租车"},
+            {id: 48, owner: "聂自勇", phone: "13673357838", plate: "豫AD31132", house: "A008垃圾房附近过期停A053 7-3-502", plan: "月租车"},
             {id: 49, owner: "关超亚", phone: "17606825053", plate: "豫A383ZM,豫A3MZ86", house: "B160 2-1-706", plan: "月租车"},
             {id: 50, owner: "李炳凤", phone: "13267167075", plate: "豫AFV0257,豫A9Z07L", house: "B115 6-2-902", plan: "月租车"},
             {id: 51, owner: "龚明明", phone: "15839029013", plate: "豫VL9171", house: "B132 6-2-702", plan: "月租车"},
@@ -276,25 +276,28 @@
             {id: 73, owner: "马玉莹", phone: "15981885602", plate: "豫A1Z81X", house: "B159 5-1-701", plan: "月租车"},
             {id: 74, owner: "董振远", phone: "13603485452", plate: "豫ABP8792,豫APP669", house: "B173 2-1-703", plan: "月租车"},
             {id: 75, owner: "李红彦", phone: "18037388368", plate: "豫A3B76E", house: "A108 6-1-601", plan: "月租车"},
-            {id: 76, owner: "孟放", phone: "18800000002", plate: "豫00002", house: "B237 3-2-701", plan: "临时车"},
-            {id: 77, owner: "李冬青", phone: "18800000001", plate: "豫00001", house: "B163 3-2-602", plan: "临时车"},
-            {id: 78, owner: "付雪国", phone: "18800000000", plate: "豫00000", house: "B110 6-2-802", plan: "临时车"},
-            {id: 79, owner: "马健", phone: "15538130110", plate: "豫AFZ8159,豫A16ZS3", house: "B252 3-2-202", plan: "临时车"},
-            {id: 80, owner: "张向青", phone: "18237173758", plate: "豫A89Z5L", house: "B167 2-1-1403", plan: "临时车"},
-            {id: 81, owner: "宁永丽", phone: "13071012989", plate: "豫AQ30P6", house: "A105 3-2-802", plan: "临时车"},
-            {id: 82, owner: "薛永梅", phone: "13938527232", plate: "豫A53Z8S", house: "B117 6-1-702", plan: "临时车"},
-            {id: 83, owner: "陈正林", phone: "13653866960", plate: "豫ADL3997,豫AAC8775", house: "B206 3-2-401", plan: "临时车"},
-            {id: 84, owner: "王宝娟", phone: "17303833297", plate: "豫V238ND,豫AN98Z8", house: "B121 6-2-402", plan: "临时车"},
-            {id: 85, owner: "李杰", phone: "15738815023", plate: "豫VA3Q78", house: "B007 6-1-802", plan: "临时车"},
-            {id: 86, owner: "蔡蒙蒙", phone: "13460600169", plate: "豫V6DC31,豫AG75908", house: "A101 7-2-501", plan: "临时车"},
-            {id: 87, owner: "杨先军", phone: "15890677673", plate: "豫A5A07G,豫A3XL00", house: "A093 7-3-402", plan: "临时车"},
-            {id: 88, owner: "时明建", phone: "15837181927", plate: "豫BQN681", house: "B166 2-1-1803", plan: "临时车"},
-            {id: 89, owner: "别云岩", phone: "18003851988", plate: "豫A8E4N2", house: "A011 7-2-801", plan: "临时车"},
-            {id: 90, owner: "楚红蕊", phone: "15038101358", plate: "豫A79RV0,豫R738UU", house: "B109 2-1-1405", plan: "临时车"},
-            {id: 91, owner: "刘珂", phone: "13303715249", plate: "豫AAY8329,豫B6LR02", house: "B005 6-1-602", plan: "临时车"},
-            {id: 92, owner: "乔鹏帅", phone: "15649864555", plate: "豫AAV8761,豫ABU9605", house: "B112 7-2-302", plan: "临时车"},
-            {id: 93, owner: "许海洋", phone: "18317816736", plate: "豫AGK510", house: "A009 7-2-502", plan: "临时车"},
-            {id: 94, owner: "李升阳", phone: "17737273555", plate: "豫AAA8677,豫A87F2S", house: "A107 7-1-802", plan: "临时车"}
+            {id: 76, owner: "孟放", phone: "18800000002", plate: "豫00002", house: "B237 3-2-701", plan: "过期车"},
+            {id: 77, owner: "李冬青", phone: "18800000001", plate: "豫00001", house: "B163 3-2-602", plan: "过期车"},
+            {id: 78, owner: "付雪国", phone: "18800000000", plate: "豫00000", house: "B110 6-2-802", plan: "过期车"},
+            {id: 79, owner: "马健", phone: "15538130110", plate: "豫AFZ8159,豫A16ZS3", house: "B252 3-2-202", plan: "过期车"},
+            {id: 80, owner: "张向青", phone: "18237173758", plate: "豫A89Z5L", house: "B167 2-1-1403", plan: "过期车"},
+            {id: 81, owner: "宁永丽", phone: "13071012989", plate: "豫AQ30P6", house: "A105 3-2-802", plan: "过期车"},
+            {id: 82, owner: "薛永梅", phone: "13938527232", plate: "豫A53Z8S", house: "B117 6-1-702", plan: "过期车"},
+            {id: 83, owner: "陈正林", phone: "13653866960", plate: "豫ADL3997,豫AAC8775", house: "B206 3-2-401", plan: "过期车"},
+            {id: 84, owner: "王宝娟", phone: "17303833297", plate: "豫V238ND,豫AN98Z8", house: "B121 6-2-402", plan: "过期车"},
+            {id: 85, owner: "李杰", phone: "15738815023", plate: "豫VA3Q78", house: "B007 6-1-802", plan: "过期车"},
+            {id: 86, owner: "蔡蒙蒙", phone: "13460600169", plate: "豫V6DC31,豫AG75908", house: "A101 7-2-501", plan: "过期车"},
+            {id: 87, owner: "杨先军", phone: "15890677673", plate: "豫A5A07G,豫A3XL00", house: "A093 7-3-402", plan: "过期车"},
+            {id: 88, owner: "时明建", phone: "15837181927", plate: "豫BQN681", house: "B166 2-1-1803", plan: "过期车"},
+            {id: 89, owner: "别云岩", phone: "18003851988", plate: "豫A8E4N2", house: "A011 7-2-801", plan: "过期车"},
+            {id: 90, owner: "楚红蕊", phone: "15038101358", plate: "豫A79RV0,豫R738UU", house: "B109 2-1-1405", plan: "过期车"},
+            {id: 91, owner: "刘珂", phone: "13303715249", plate: "豫AAY8329,豫B6LR02", house: "B005 6-1-602", plan: "过期车"},
+            {id: 92, owner: "乔鹏帅", phone: "15649864555", plate: "豫AAV8761,豫ABU9605", house: "B112 7-2-302", plan: "过期车"},
+            {id: 93, owner: "许海洋", phone: "18317816736", plate: "豫AGK510", house: "A009 7-2-502", plan: "过期车"},
+            {id: 94, owner: "李升阳", phone: "17737273555", plate: "豫AAA8677,豫A87F2S", house: "A107 7-1-802", plan: "过期车"},
+            {id: 95, owner: "未知", phone: "12345678910", plate: "豫AC18893,豫AFP209B", house: "9.1未录入 1-306", plan: "月租车"}
+
+            
         ];
 
         // DOM 加载完成后执行
@@ -326,6 +329,7 @@
                         <td>${vehicle.owner}</td>
                         <td>${vehicle.phone}</td>
                         <td>${vehicle.house}</td>
+                        <td>${vehicle.plan}</td>
                     `;
                     allVehicleBody.appendChild(row);
                 });
@@ -335,15 +339,15 @@
             function filterVehicleData() {
                 const searchTerm = searchInput.value.toLowerCase().trim();
                 
-                if (!searchTerm) {
-                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="5">请输入查询条件以显示结果</td></tr>';
+                if (searchTerm.length < 2) {
+                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="6">请输入至少2个字符进行查询</td></tr>';
                     foundCount.textContent = '0';
                     return;
                 }
                 
                 const filteredData = vehicleData.filter(vehicle => 
                     vehicle.owner.toLowerCase().includes(searchTerm) || 
-                    vehicle.phone.includes(searchTerm) || 
+                    vehicle.phone.toLowerCase().includes(searchTerm) || 
                     vehicle.plate.toLowerCase().includes(searchTerm) || 
                     vehicle.house.toLowerCase().includes(searchTerm)
                 );
@@ -357,7 +361,7 @@
                 vehicleBody.innerHTML = '';
                 
                 if (data.length === 0) {
-                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="5">没有找到匹配的车辆信息</td></tr>';
+                    vehicleBody.innerHTML = '<tr class="no-results"><td colspan="6">没有找到匹配的车辆信息</td></tr>';
                     return;
                 }
                 
@@ -380,6 +384,7 @@
                         <td>${highlight(vehicle.owner)}</td>
                         <td>${highlight(vehicle.phone)}</td>
                         <td>${highlight(vehicle.house)}</td>
+                        <td>${vehicle.plan}</td>
                     `;
                     
                     vehicleBody.appendChild(row);
